@@ -5,9 +5,12 @@ $now = $_SESSION['login_id'];
 $nowuser = $User->getCurrentUser($now);
 $nowlogin = $User->getCurrentLogin($now);
 
-$buzzs = $User->displayFFBuzz($now);
-
 $img = $nowuser["image"];
+
+$userid = $_GET["id"];
+$user = $User->getUser($userid);
+$buzzs = $User->displayUserBuzz($userid);
+
 ?>
 
 <!doctype html>
@@ -29,12 +32,6 @@ $img = $nowuser["image"];
     }
     .sidebar{
       height: 100vh;
-    }
-    .buzzline{
-      height: 90vh;
-    }
-    .buzzline-header{
-      height: 8vh;
     }
     </style>
   </head>
@@ -112,59 +109,61 @@ $img = $nowuser["image"];
             <p class="small text-light pt-3">BUZZER</p>
           </div>
         </div>
-
-        <div class="col-md-4 mt-5">
-            <div class="card mt-5">
-              <div class="card-header bg-dark">
-                <div class="row">
-                  <div class="col-md-4 text-center">
-                  <?php
-                  if(empty($img)){
-                    echo '<i class="fas fa-user fa-5x text-light"></i>';
-                  }else{
-                    echo '<img src="uploads/'.$img.'" height="90" width="90" class="rounded-circle">';
-                  }
-                  ?>
-                  </div>
-                  <div class="col-md-8">
-                    <h4 class="text-light"><?php echo $nowuser['account_name']; ?></h4>
-                    <h4 class="text-light small">@<?php echo $nowlogin['username']; ?></h4>
-                  </div>
-                </div>
-              </div>
-              <div class="card-body">
-                <form action="" method="post">
-                  <textarea name="text" rows="10" class="form-control" placeholder="What's happening?"></textarea>
-                  <input type="hidden" name="user" value="<?php echo $now; ?>">
-                  <br>
-                  <button type="submit" name="buzz" class="btn btn-danger float-right">BUZZ</button>
-                </form>
-              </div>
-            </div>
-        </div>
-
-        <div class="col-md-5 border p-0 bg-danger">
-          <h5 class="display-4 text-light buzzline-header pl-3">Buzzline</h5>
-          <div class="buzzline" style="overflow:scroll;">
-                  <?php
+        <div class="col-md-9">
+            <div class="container">
+                <div class="card w-75 mx-auto">
+                    <div class="card-header bg-dark">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <?php
+                                $image = $user["image"];
+                                  if(empty($image)){
+                                    echo '<div class="text-center">';
+                                    echo '<i class="fas fa-user fa-6x text-light"></i>';
+                                    echo '</div>';
+                                  }else{
+                                    echo '<div class="text-center">';
+                                    echo '<img src="uploads/'.$image.'" height="100" width="120" class="mx-auto">';
+                                    echo '</div>';
+                                  }
+                                ?>
+                            </div>
+                            <div class="col-md-7">
+                                <h5 class="text-light"><strong><?php echo $user['account_name']; ?></strong><?php echo "(@".$user['username'].")"; ?></h5>
+                                <form action="action.php" method="post">
+                                    <input type="hidden" name="user_id" value="<?php echo $now; ?>">
+                                    <input type="hidden" name="follow_id" value="<?php echo $userid; ?>">
+                                    <?php
+                                    $validateFF = $User->validateFollow($now,$userid);
+                                    if($validateFF == "unfollow"){
+                                        echo '<button type="submit" name="unfollow" class="btn btn-outline-danger float-right">UNFOLLOW</button>';
+                                    }else{
+                                        echo '<button type="submit" name="follow" class="btn btn-danger float-right">FOLLOW</button>';
+                                    }
+                                    ?>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body bg-danger" style="height:84vh; overflow: scroll;">
+                        <?php
                         foreach($buzzs as $key=>$buzz){
-                            $tweetid = $buzz["tweet_id"];
-                            $image = $buzz["image"];
-                            echo '<div class="border bg-light w-75 mx-auto pt-2">';
+                            $buzid = $buzz["tweet_id"];
+                            echo '<div class="border bg-light pt-2">';
                                 echo "<div class='row'>";
-                                    echo "<div class='col-md-4'>";
-                                        if(empty($image)){
-                                          echo '<div class="text-center mt-2">';
-                                          echo '<i class="fas fa-user fa-4x text-danger"></i>';
-                                          echo '</div>';
-                                        }else{
-                                          echo '<div class="text-center">';
-                                          echo '<img src="uploads/'.$image.'" height="80" width="80" class="rounded-circle mx-auto">';
-                                          echo '</div>';
-                                        }
+                                    echo "<div class='col-4 pt-3'>";
+                                    if(empty($image)){
+                                        echo '<div class="text-center">';
+                                        echo '<i class="fas fa-user fa-5x text-danger"></i>';
+                                        echo '</div>';
+                                      }else{
+                                        echo '<div class="text-center">';
+                                        echo '<img src="uploads/'.$image.'" height="90" width="90" class="rounded-circle mx-auto">';
+                                        echo '</div>';
+                                      }
                                     echo "</div>";
-                                    echo "<div class='col-md-8'>";
-                                        echo "<p><strong>".$buzz['account_name']."</strong></p>";
+                                    echo "<div class='col-8'>";
+                                        echo "<p><strong>".$user['account_name']."</strong></p>";
                                         echo "<hr>";
                                         echo "<p>".$buzz['text']."</p>";
                                     echo "</div>";
@@ -175,9 +174,9 @@ $img = $nowuser["image"];
                                     echo '<div class="col-6">';
                                         echo '<form action="action.php" method="post">';
                                             echo '<input type="hidden" name="user_id" value="'.$now.'">';
-                                            echo '<input type="hidden" name="tweet_id" value="'.$tweetid.'">';
-                                            $validateFav = $User->validateFav($now,$tweetid);
-                                            $favorites = $User->countFav($tweetid);
+                                            echo '<input type="hidden" name="tweet_id" value="'.$buzid.'">';
+                                            $validateFav = $User->validateFav($now,$buzid);
+                                            $favorites = $User->countFav($buzid);
                                             if($validateFav == "favorite"){
                                               echo '<button type="submit" name="unfav" class="btn btn-danger btn-block">FAV('.$favorites.')</button>';
                                             }else{
@@ -186,12 +185,14 @@ $img = $nowuser["image"];
                                         echo '</form>';
                                     echo '</div>';
                                 echo '</div>';
-                            echo '</div>';
+                            echo "</div>";
                         }
                         
                         
-                  ?>
-          </div>
+                        ?>
+                    </div>
+                </div>
+            </div>
         </div>
       </div>
     <!-- Optional JavaScript -->

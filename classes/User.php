@@ -78,8 +78,35 @@ class User extends Database{
         }
     }
 
+    public function getUser($id){
+        $sql = "SELECT * FROM users INNER JOIN login ON users.login_id = login.id WHERE users.id = '$id'";
+        $result = $this->con->query($sql);
+
+        if($result == FALSE){
+            die('cannot get user'.$this->con->connect_error);
+        }else{
+            return $result->fetch_assoc();
+        }
+    }
+
     public function displayMyBuzz($id){
-        $sql = "SELECT * FROM tweets WHERE user_id = '$id' ORDER BY id DESC";
+        $sql = "SELECT * FROM tweets WHERE user_id = '$id' ORDER BY tweet_id DESC";
+        $result = $this->con->query($sql);
+
+        if($result->num_rows>0){
+            $row = array();
+            while($rows = $result->fetch_assoc()){
+                $row[] = $rows;
+            }
+
+            return $row;
+        }else{
+            return FALSE;
+        }
+    }
+
+    public function displayUserBuzz($id){
+        $sql = "SELECT * FROM tweets WHERE user_id = '$id' ORDER BY tweet_id DESC";
         $result = $this->con->query($sql);
 
         if($result->num_rows>0){
@@ -95,7 +122,7 @@ class User extends Database{
     }
 
     public function displayFFBuzz($id){
-        $sql = "SELECT * FROM tweets INNER JOIN followed_users ON tweets.user_id = followed_users.follow_id INNER JOIN users ON tweets.user_id = users.id WHERE followed_users.user_id = '$id' ORDER BY tweets.id DESC";
+        $sql = "SELECT * FROM tweets INNER JOIN followed_users ON tweets.user_id = followed_users.follow_id INNER JOIN users ON tweets.user_id = users.id WHERE followed_users.user_id = '$id' ORDER BY tweets.tweet_id DESC";
         $result = $this->con->query($sql);
 
         if($result->num_rows>0){
@@ -127,7 +154,7 @@ class User extends Database{
     }
 
     public function deleteMyBuzz($id){
-        $sql = "DELETE FROM tweets WHERE id = '$id'";
+        $sql = "DELETE FROM tweets WHERE tweet_id = '$id'";
         $result = $this->con->query($sql);
 
         if($result == FALSE){
@@ -147,6 +174,17 @@ class User extends Database{
             header('location: userlist.php');
         }
 
+    }
+
+    public function unfollowUser($userid,$followid){
+        $sql = "DELETE FROM followed_users WHERE user_id = '$userid' AND follow_id = '$followid'";
+        $result = $this->con->query($sql);
+
+        if($result == FALSE){
+            die('cannot unfollow'.$this->con->connect_error);
+        }else{
+            header('location: userlist.php');
+        }
     }
 
     public function editUser($id,$acname,$uname){
@@ -174,6 +212,81 @@ class User extends Database{
         }else{
             move_uploaded_file($_FILES["picture"]["tmp_name"],$target_file);
             header('location: profile.php');
+        }
+    }
+
+    public function validateFollow($now,$user){
+        $sql = "SELECT * FROM followed_users WHERE user_id = '$now' AND follow_id = '$user'";
+        $result = $this->con->query($sql);
+
+        if($result->num_rows == 1){
+            return "unfollow";
+        }else{
+            return "follow";
+        }
+    }
+
+    public function favorite($userid,$tweetid){
+        $sql = "INSERT INTO favorites(user_id,tweet_id)VALUES('$userid','$tweetid')";
+        $result = $this->con->query($sql);
+
+        if($result == FALSE){
+            die('cannot favorite'.$this->con->connect_error);
+        }else{
+            header('location: home.php');
+        }
+    }
+
+    public function unFavorite($userid,$tweetid){
+        $sql = "DELETE FROM favorites WHERE user_id = '$userid' AND tweet_id = '$tweetid'";
+        $result = $this->con->query($sql);
+
+        if($result == FALSE){
+            die('cannot unfavorite'.$this->con->connect_error);
+        }else{
+            header('location: home.php');
+        }
+    }
+
+    public function validateFav($userid,$tweetid){
+        $sql = "SELECT * FROM favorites WHERE user_id = '$userid' AND tweet_id = '$tweetid'";
+        $result = $this->con->query($sql);
+
+        if($result->num_rows == 1){
+            return "favorite";
+        }else{
+            return "not";
+        }
+    }
+
+    public function countFav($id){
+        $sql = "SELECT id FROM favorites WHERE tweet_id = '$id'";
+        $result = $this->con->query($sql);
+
+        if($result->num_rows>0){
+            $row = array();
+            while($rows = $result->fetch_assoc()){
+                $row[] = $rows;
+            }
+
+            return count($row);
+        }else{
+            return 0;
+        }
+    }
+
+    public function displayFav($id){
+        $sql = "SELECT * FROM favorites INNER JOIN tweets ON favorites.tweet_id = tweets.tweet_id WHERE favorites.user_id = '$id' ORDER BY tweets.tweet_id DESC";
+        $result = $this->con->query($sql);
+
+        if($result->num_rows>0){
+            $row = array();
+            while($rows = $result->fetch_assoc()){
+                $row[] = $rows;
+            }
+            return $row;
+        }else{
+            return FALSE;
         }
     }
 

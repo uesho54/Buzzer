@@ -77,7 +77,7 @@ $mybuzzs = $User->displayMyBuzz($now);
                 <ul style="list-style: none;">
                   <li><a href="home.php" class="text-light">HOME</a></li>
                   <br>
-                  <li><a href="" class="text-light">#TREND</a></li>
+                  <li><a href="favorite.php" class="text-light">FAVORITES</a></li>
                   <br>
                   <li><a href="" class="text-light">MESSAGE</a></li>
                   <br>
@@ -125,34 +125,53 @@ $mybuzzs = $User->displayMyBuzz($now);
                                 ?>
                             </div>
                             <div class="col-md-7">
-                                <p class="text-light"><strong><?php echo $nowuser['account_name']; ?></strong><?php echo "(@".$nowlogin['username'].")"; ?></p>
+                                <h5 class="text-light"><strong><?php echo $nowuser['account_name']; ?></strong><?php echo "(@".$nowlogin['username'].")"; ?></h5>
                                 <a href="edit_profile.php" role="button" class="btn btn-outline-danger float-right">EDIT</a>
                             </div>
                         </div>
                     </div>
-                    <div class="card-body bg-danger" style="height:85vh; overflow: scroll;">
+                    <div class="card-body bg-danger" style="height:84vh; overflow: scroll;">
                         <?php
                         foreach($mybuzzs as $key=>$buzz){
-                            $buzid = $buzz["id"];
+                            $buzid = $buzz["tweet_id"];
                             $image = $nowuser["image"];
-                            echo "<div class='row border bg-light pt-2'>";
-                                echo "<div class='col-4 pt-3'>";
-                                if(empty($image)){
-                                    echo '<div class="text-center">';
-                                    echo '<i class="fas fa-user fa-5x text-danger"></i>';
-                                    echo '</div>';
-                                  }else{
-                                    echo '<div class="text-center">';
-                                    echo '<img src="uploads/'.$image.'" height="90" width="90" class="rounded-circle mx-auto">';
-                                    echo '</div>';
-                                  }
+                            echo '<div class="border bg-light pt-2">';
+                                echo "<div class='row'>";
+                                    echo "<div class='col-4 pt-3'>";
+                                    if(empty($image)){
+                                        echo '<div class="text-center">';
+                                        echo '<i class="fas fa-user fa-5x text-danger"></i>';
+                                        echo '</div>';
+                                      }else{
+                                        echo '<div class="text-center">';
+                                        echo '<img src="uploads/'.$image.'" height="90" width="90" class="rounded-circle mx-auto">';
+                                        echo '</div>';
+                                      }
+                                    echo "</div>";
+                                    echo "<div class='col-8'>";
+                                        echo "<p><strong>".$nowuser['account_name']."</strong></p>";
+                                        echo "<hr>";
+                                        echo "<p>".$buzz['text']."</p>";
+                                        echo '<a href="delete_mybuzz.php?buzz_id='.$buzid.'" role="button" class="btn btn-outline-danger btn-block w-25 float-right mb-1" >DEL</a>';
+                                    echo "</div>";
                                 echo "</div>";
-                                echo "<div class='col-8'>";
-                                    echo "<p><strong>".$nowuser['account_name']."</strong></p>";
-                                    echo "<hr>";
-                                    echo "<p>".$buzz['text']."</p>";
-                                    echo '<a href="delete_mybuzz.php?buzz_id='.$buzid.'" role="button" class="btn btn-outline-danger btn-sm float-right mb-1" >DEL</a>';
-                                echo "</div>";
+                                echo '<div class="row">';
+                                    echo '<div class="col-6">';
+                                    echo '</div>';
+                                    echo '<div class="col-6">';
+                                        echo '<form action="action.php" method="post">';
+                                            echo '<input type="hidden" name="user_id" value="'.$now.'">';
+                                            echo '<input type="hidden" name="tweet_id" value="'.$buzid.'">';
+                                            $validateFav = $User->validateFav($now,$buzid);
+                                            $favorites = $User->countFav($buzid);
+                                            if($validateFav == "favorite"){
+                                              echo '<button type="submit" name="unfav" class="btn btn-danger btn-block">FAV('.$favorites.')</button>';
+                                            }else{
+                                              echo '<button type="submit" name="fav" class="btn btn-light btn-block">FAV('.$favorites.')</button>';
+                                            }
+                                        echo '</form>';
+                                    echo '</div>';
+                                echo '</div>';
                             echo "</div>";
                         }
                         

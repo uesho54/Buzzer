@@ -78,7 +78,7 @@ $nowid = $nowlogin["id"];
                 <ul style="list-style: none;">
                   <li><a href="home.php" class="text-light">HOME</a></li>
                   <br>
-                  <li><a href="" class="text-light">#TREND</a></li>
+                  <li><a href="favorite.php" class="text-light">FAVORITES</a></li>
                   <br>
                   <li><a href="" class="text-light">MESSAGE</a></li>
                   <br>

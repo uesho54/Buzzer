@@ -41,6 +41,13 @@ if(isset($_POST["register"])){
     $followid = $_POST["follow_id"];
 
     $User->followUser($userid,$followid);
+}elseif(isset($_POST["unfollow"])){
+
+    $userid = $_POST["user_id"];
+    $followid = $_POST["follow_id"];
+
+    $User->unfollowUser($userid,$followid);
+
 }elseif(isset($_POST["icon"])){
 
     $userid = $_POST["userid"];
@@ -55,6 +62,21 @@ if(isset($_POST["register"])){
     $uname = $_POST["uname"];
 
     $User->editUser($userid,$acname,$uname);
+
+}elseif(isset($_POST["unfav"])){
+
+    $userid = $_POST["user_id"];
+    $tweetid = $_POST["tweet_id"];
+
+    $User->unFavorite($userid,$tweetid);
+
+}elseif(isset($_POST["fav"])){
+
+    $userid = $_POST["user_id"];
+    $tweetid = $_POST["tweet_id"];
+
+    $User->favorite($userid,$tweetid);
+
 }
 
 
