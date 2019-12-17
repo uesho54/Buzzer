@@ -77,6 +77,15 @@ if(isset($_POST["register"])){
 
     $User->favorite($userid,$tweetid);
 
+}elseif(isset($_POST["send"])){
+
+    $userid = $_POST["user_id"];
+    $followid = $_POST["follow_id"];
+    $text = $_POST["text"];
+
+    $User->sendDM($userid,$followid,$text);
+    header('location: dm.php?id='.$followid);
+
 }
 
 

@@ -4,12 +4,10 @@ include 'action.php';
 $now = $_SESSION['login_id'];
 $nowuser = $User->getCurrentUser($now);
 $nowlogin = $User->getCurrentLogin($now);
-
 $img = $nowuser["image"];
 
-$users = $User->displayUsers();
+$follows = $User->displayFollowedUsers($now);
 ?>
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -108,14 +106,14 @@ $users = $User->displayUsers();
         </div>
         <div class="col-md-9">
             <div class="container">
-                <h5 class="display-4 text-danger">Userlist</h5>
+                <h5 class="display-4 text-danger">Followlist</h5>
                 <hr>
                 <div class="ml-3" style="height: 85vh; overflow: scroll;">
                     <ul style="list-style: none;">
                         <?php
-                        foreach($users as $key=>$user){
-                            $userid = $user["id"];
-                            $image = $user["image"];
+                        foreach($follows as $key=>$follow){
+                            $userid = $follow["login_id"];
+                            $image = $follow["image"];
                             $loginuserid = $nowlogin["id"];
                             if($userid == $loginuserid){
                                 echo "<div class='alert alert-danger w-75 mx-auto text-center p-0 m-0'>";
@@ -135,23 +133,11 @@ $users = $User->displayUsers();
                                                 echo '</div>';
                                             }
                                         echo '</div>';
-                                        echo '<div class="col-md-5">';
-                                            echo "<p>".$user['account_name']."(@".$user['username'].")</p>";
+                                        echo '<div class="col-md-6">';
+                                            echo "<p>".$follow['account_name']."(@".$follow['username'].")</p>";
                                         echo '</div>';
-                                        echo '<div class="col-md-2 text-center mt-3">';
-                                            echo '<form action="action.php" method="post">';
-                                                echo '<input type="hidden" name="user_id" value="'.$now.'">';
-                                                echo '<input type="hidden" name="follow_id" value="'.$userid.'">';
-                                                $validateFF = $User->validateFollow($now,$userid);
-                                                if($validateFF == "unfollow"){
-                                                    echo '<button type="submit" name="unfollow" class="btn btn-outline-danger btn-sm float-right">UNFOLLOW</button>';
-                                                }else{
-                                                    echo '<button type="submit" name="follow" class="btn btn-danger btn-sm float-right">FOLLOW</button>';
-                                                }
-                                            echo '</form>';
-                                        echo '</div>';
-                                        echo '<div class="col-md-2 text-center mt-3">';
-                                            echo '<a href="userprofile.php?id='.$userid.'" role="button" class="btn btn-danger btn-sm">DETAIL</a>';
+                                        echo '<div class="col-md-3 text-center mt-3">';
+                                            echo '<a href="dm.php?id='.$userid.'" role="button" class="btn btn-danger btn-sm">MESSAGE</a>';
                                         echo '</div>';
                                     echo "</div>";
                                 echo "</li>";

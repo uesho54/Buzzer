@@ -4,12 +4,13 @@ include 'action.php';
 $now = $_SESSION['login_id'];
 $nowuser = $User->getCurrentUser($now);
 $nowlogin = $User->getCurrentLogin($now);
-
 $img = $nowuser["image"];
 
-$users = $User->displayUsers();
-?>
+$followid = $_GET["id"];
+$follow = $User->getUser($followid);
 
+$dms = $User->displayDM($now,$followid);
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -106,61 +107,44 @@ $users = $User->displayUsers();
             <p class="small text-light pt-3">BUZZER</p>
           </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-9" style="position: relative;">
             <div class="container">
-                <h5 class="display-4 text-danger">Userlist</h5>
+                <h5 class="display-4 text-danger pl-5">DM with <?php echo $follow["account_name"]; ?></h5>
                 <hr>
-                <div class="ml-3" style="height: 85vh; overflow: scroll;">
-                    <ul style="list-style: none;">
-                        <?php
-                        foreach($users as $key=>$user){
-                            $userid = $user["id"];
-                            $image = $user["image"];
-                            $loginuserid = $nowlogin["id"];
-                            if($userid == $loginuserid){
-                                echo "<div class='alert alert-danger w-75 mx-auto text-center p-0 m-0'>";
-                                    echo '<h4 class="display-4">YOURSELF</h4>';
-                                echo "</div>";
-                            }else{
-                                echo "<li class='border w-75 mx-auto'>";
-                                    echo "<div class= 'row mt-2'>";
-                                        echo '<div class="col-md-3">';
-                                            if(empty($image)){
-                                                echo '<div class="text-center pb-2">';
-                                                echo '<i class="fas fa-user fa-4x text-danger"></i>';
-                                                echo '</div>';
-                                            }else{
-                                                echo '<div class="text-center pb-2">';
-                                                echo '<img src="uploads/'.$image.'" height="80" width="80" class="rounded-circle mx-auto">';
-                                                echo '</div>';
-                                            }
-                                        echo '</div>';
-                                        echo '<div class="col-md-5">';
-                                            echo "<p>".$user['account_name']."(@".$user['username'].")</p>";
-                                        echo '</div>';
-                                        echo '<div class="col-md-2 text-center mt-3">';
-                                            echo '<form action="action.php" method="post">';
-                                                echo '<input type="hidden" name="user_id" value="'.$now.'">';
-                                                echo '<input type="hidden" name="follow_id" value="'.$userid.'">';
-                                                $validateFF = $User->validateFollow($now,$userid);
-                                                if($validateFF == "unfollow"){
-                                                    echo '<button type="submit" name="unfollow" class="btn btn-outline-danger btn-sm float-right">UNFOLLOW</button>';
-                                                }else{
-                                                    echo '<button type="submit" name="follow" class="btn btn-danger btn-sm float-right">FOLLOW</button>';
-                                                }
-                                            echo '</form>';
-                                        echo '</div>';
-                                        echo '<div class="col-md-2 text-center mt-3">';
-                                            echo '<a href="userprofile.php?id='.$userid.'" role="button" class="btn btn-danger btn-sm">DETAIL</a>';
-                                        echo '</div>';
-                                    echo "</div>";
-                                echo "</li>";
-                            }
+                <div style="height: 75vh; overflow: scroll;">
+                    <?php
+                    foreach($dms as $key=>$dm){
+                        $dmUser = $dm["user_id"];
+                        $text = $dm["text"];
+                        if($dmUser == $now){
+                            echo '<p class = "float-right mr-3 text-danger">'.$nowuser["account_name"].'</p>';
+                            echo "<br><br>";
+                            echo '<div class="alert alert-danger float-right w-50">'.$text.'</div>';
+                            echo "<br><br><br>";
+                        }else{
+                            echo '<div class="text-danger">'.$follow["account_name"].'</div>';
+                            echo "<br>";
+                            echo '<div class="alert alert-dark w-50">'.$text.'</div>';
                         }
-                        
-                        ?>
-                    </ul>
+                    }
+                    ?>
                 </div>
+                <form action="action.php" method="post" style="position: absolute; bottom: 0; width: 90%">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-9">
+                                <input type="text" name="text" class="form-control">
+                                <input type="hidden" name="user_id" value="<?php echo $now; ?>">
+                                <input type="hidden" name="follow_id" value="<?php echo $followid; ?>">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" name="send" class="btn btn-danger btn-block w-50 mx-auto">SEND</button>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                </form>
             </div>
         </div>
       </div>

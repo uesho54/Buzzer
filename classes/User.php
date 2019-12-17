@@ -276,7 +276,7 @@ class User extends Database{
     }
 
     public function displayFav($id){
-        $sql = "SELECT * FROM favorites INNER JOIN tweets ON favorites.tweet_id = tweets.tweet_id WHERE favorites.user_id = '$id' ORDER BY tweets.tweet_id DESC";
+        $sql = "SELECT * FROM favorites INNER JOIN tweets ON favorites.tweet_id = tweets.tweet_id INNER JOIN users ON tweets.user_id = users.id WHERE favorites.user_id = '$id' ORDER BY tweets.tweet_id DESC";
         $result = $this->con->query($sql);
 
         if($result->num_rows>0){
@@ -284,6 +284,47 @@ class User extends Database{
             while($rows = $result->fetch_assoc()){
                 $row[] = $rows;
             }
+            return $row;
+        }else{
+            return FALSE;
+        }
+    }
+
+    public function displayFollowedUsers($id){
+        $sql = "SELECT * FROM users INNER JOIN login ON users.login_id = login.id INNER JOIN followed_users ON users.id = followed_users.follow_id WHERE followed_users.user_id = '$id'";
+        $result = $this->con->query($sql);
+
+        if($result->num_rows>0){
+            $row = array();
+            while($rows = $result->fetch_assoc()){
+                $row[] = $rows;
+            }
+
+            return $row;
+        }else{
+            return FALSE;
+        }
+    }
+
+    public function sendDM($userid,$followid,$text){
+        $sql = "INSERT INTO messages(user_id, follow_id, text)VALUES('$userid','$followid','$text')";
+        $result = $this->con->query($sql);
+
+        if($result == FALSE){
+            die('cannot send DM'.$this->con->connect_error);
+        }
+    }
+
+    public function displayDM($userid,$followid){
+        $sql = "SELECT * FROM messages WHERE (user_id = '$userid' AND follow_id = '$followid') OR (user_id = '$followid' AND follow_id = '$userid')";
+        $result = $this->con->query($sql);
+
+        if($result->num_rows>0){
+            $row = array();
+            while($rows = $result->fetch_assoc()){
+                $row[] = $rows;
+            }
+
             return $row;
         }else{
             return FALSE;

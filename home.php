@@ -85,7 +85,7 @@ $img = $nowuser["image"];
                   <br>
                   <li><a href="favorite.php" class="text-light">FAVORITES</a></li>
                   <br>
-                  <li><a href="" class="text-light">MESSAGE</a></li>
+                  <li><a href="message.php" class="text-light">MESSAGE</a></li>
                   <br>
                   <li><a href="userlist.php" class="text-light">USERLIST</a></li>
                   <br>
