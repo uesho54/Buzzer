@@ -148,6 +148,7 @@ $img = $nowuser["image"];
           <div class="buzzline" style="overflow:scroll;">
                   <?php
                         foreach($buzzs as $key=>$buzz){
+                            $tweetuser = $buzz["follow_id"];
                             $tweetid = $buzz["tweet_id"];
                             $image = $buzz["image"];
                             echo '<div class="border bg-light w-75 mx-auto pt-2">';
@@ -171,6 +172,12 @@ $img = $nowuser["image"];
                                 echo "</div>";
                                 echo '<div class="row">';
                                     echo '<div class="col-6">';
+                                        $comments = $User->countCom($tweetid);
+                                        echo '<form action="comment.php" method="get">';
+                                          echo '<input type="hidden" name="user_id" value="'.$tweetuser.'">';
+                                          echo '<input type="hidden" name="tweet_id" value="'.$tweetid.'">';
+                                          echo '<button type="submit" class="btn btn-outline-dark btn-block">COMMENT('.$comments.')</button>';
+                                        echo '</form>';
                                     echo '</div>';
                                     echo '<div class="col-6">';
                                         echo '<form action="action.php" method="post">';

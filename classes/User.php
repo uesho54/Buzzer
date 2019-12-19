@@ -331,6 +331,58 @@ class User extends Database{
         }
     }
 
+    public function getoneTweet($id){
+        $sql = "SELECT * FROM tweets WHERE tweet_id = '$id'";
+        $result = $this->con->query($sql);
+
+        if($result == FALSE){
+            die('cannot get buzz'.$this->con->connect_error);
+        }else{
+            return $result->fetch_assoc();
+        }
+    }
+
+    public function sendComment($userid,$tweetid,$text){
+        $sql = "INSERT INTO comments(user_id, tweet_id, text)VALUES('$userid','$tweetid','$text')";
+        $result = $this->con->query($sql);
+
+        if($result == FALSE){
+            die('cannot send comment'.$this->con->connect_error);
+        }
+    }
+
+    public function displayComments($id){
+        $sql = "SELECT * FROM comments WHERE tweet_id = '$id'";
+        $result = $this->con->query($sql);
+
+        if($result->num_rows>0){
+            $row = array();
+            while($rows = $result->fetch_assoc()){
+                $row[] = $rows;
+            }
+
+            return $row;
+        }else{
+            return FALSE;
+        }
+    }
+
+    public function countCom($id){
+        $sql = "SELECT comment_id FROM comments WHERE tweet_id = '$id'";
+        $result = $this->con->query($sql);
+
+        if($result->num_rows>0){
+            $row = array();
+            while($rows = $result->fetch_assoc()){
+                $row[] = $rows;
+            }
+
+            return count($row);
+        }else{
+            return 0;
+        }
+    }
+
 
 }
 

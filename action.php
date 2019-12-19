@@ -86,6 +86,15 @@ if(isset($_POST["register"])){
     $User->sendDM($userid,$followid,$text);
     header('location: dm.php?id='.$followid);
 
+}elseif(isset($_POST["comment"])){
+
+    $nowid = $_POST["now_id"];
+    $userid = $_POST["user_id"];
+    $tweetid = $_POST["tweet_id"];
+    $text = $_POST["text"];
+
+    $User->sendComment($nowid,$tweetid,$text);
+    header('location: comment.php?user_id='.$userid.'&tweet_id='.$tweetid);
 }
 
 
