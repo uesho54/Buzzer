@@ -4,32 +4,40 @@ include 'Database.php';
 class User extends Database{
 
     public function addLogin_User($acname,$email,$uname,$pword){
-        $loginsql = "INSERT INTO login(username,password)VALUES('$uname','$pword')";
-        $loginResult = $this->con->query($loginsql);
 
-        if($loginResult == TRUE){
-            $logid = $this->con->insert_id;
+        $validate = "SELECT * FROM login WHERE password = '$pword'";
+        $validateresult = $this->con->query($validate);
 
-            $usersql = "INSERT INTO users(account_name,email,login_id)VALUES('$acname','$email','$logid')";
-            $userResult =$this->con->query($usersql);
+        if($validateresult->num_rows == 0){
+            $loginsql = "INSERT INTO login(username,password)VALUES('$uname','$pword')";
+            $loginResult = $this->con->query($loginsql);
 
-            if($userResult == TRUE){
-                $ownid = $this->con->insert_id;
+            if($loginResult == TRUE){
+                $logid = $this->con->insert_id;
 
-                $followsql = "INSERT INTO followed_users(user_id,follow_id)VALUES('$ownid','$ownid')";
-                $followResult = $this->con->query($followsql);
+                $usersql = "INSERT INTO users(account_name,email,login_id)VALUES('$acname','$email','$logid')";
+                $userResult =$this->con->query($usersql);
 
-                if($followResult == FALSE){
-                    echo "error following self".$this->con->connect_error;
+                if($userResult == TRUE){
+                    $ownid = $this->con->insert_id;
+
+                    $followsql = "INSERT INTO followed_users(user_id,follow_id)VALUES('$ownid','$ownid')";
+                    $followResult = $this->con->query($followsql);
+
+                    if($followResult == FALSE){
+                        echo "error following self".$this->con->connect_error;
+                    }else{
+                        header('location: index.php');
+                    }
+
                 }else{
-                    header('location: index.php');
+                    echo "error adding user";
                 }
-
             }else{
-                echo "error adding user";
+                echo "error adding login";
             }
         }else{
-            echo "error adding login";
+            echo "password alredy used";
         }
     }
 
@@ -195,6 +203,17 @@ class User extends Database{
             die('cannot edit user'.$this->con->connect_error);
         }else{
             header('location: profile.php');
+        }
+    }
+
+    public function editSetting($id,$email,$pword){
+        $sql = "UPDATE users INNER JOIN login ON users.login_id = login.id SET users.email = '$email', login.password = '$pword' WHERE users.id = '$id'";
+        $result = $this->con->query($sql);
+
+        if($result == FALSE){
+            die('cannot edit setting'.$this->con->connect_error);
+        }else{
+            header('location: setting.php');
         }
     }
 
@@ -369,6 +388,38 @@ class User extends Database{
 
     public function countCom($id){
         $sql = "SELECT comment_id FROM comments WHERE tweet_id = '$id'";
+        $result = $this->con->query($sql);
+
+        if($result->num_rows>0){
+            $row = array();
+            while($rows = $result->fetch_assoc()){
+                $row[] = $rows;
+            }
+
+            return count($row);
+        }else{
+            return 0;
+        }
+    }
+
+    public function countFollow($id){
+        $sql = "SELECT id FROM followed_users WHERE user_id = '$id'";
+        $result = $this->con->query($sql);
+
+        if($result->num_rows>0){
+            $row = array();
+            while($rows = $result->fetch_assoc()){
+                $row[] = $rows;
+            }
+
+            return count($row);
+        }else{
+            return 0;
+        }
+    }
+
+    public function countFollower($id){
+        $sql = "SELECT id FROM followed_users WHERE follow_id = '$id'";
         $result = $this->con->query($sql);
 
         if($result->num_rows>0){

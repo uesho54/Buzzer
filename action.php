@@ -95,6 +95,27 @@ if(isset($_POST["register"])){
 
     $User->sendComment($nowid,$tweetid,$text);
     header('location: comment.php?user_id='.$userid.'&tweet_id='.$tweetid);
+
+}elseif(isset($_POST["set"])){
+
+    $userid = $_POST["userid"];
+    $email = $_POST["email"];
+    $pword = md5($_POST["pword"]);
+
+    $User->editSetting($userid,$email,$pword);
+
+}elseif(isset($_POST["rebuzz"])){
+
+    $nowid = $_POST["now_id"];
+    $userid = $_POST["user_id"];
+    $buzz = $_POST["buzz_text"];
+
+    $user = $User->getUser($userid);
+
+    $rebuzz = $buzz." ( BUZZED BY ".$user["account_name"]." ) ";
+
+    $User->addTweet($nowid,$rebuzz);
+
 }
 
 

@@ -92,7 +92,7 @@ $users = $User->displayUsers();
               <div class="col-md-1"></div>
               <div class="col-md-11">
                 <ul style="list-style: none;">
-                  <li><a href="" class="text-light">SETTING</a></li>
+                  <li><a href="setting.php" class="text-light">SETTING</a></li>
                   <br>
                   <li><a href="" class="text-light">HELP</a></li>
                   <br>

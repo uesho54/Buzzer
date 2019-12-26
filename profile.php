@@ -92,7 +92,7 @@ $mybuzzs = $User->displayMyBuzz($now);
               <div class="col-md-1"></div>
               <div class="col-md-11">
                 <ul style="list-style: none;">
-                  <li><a href="" class="text-light">SETTING</a></li>
+                  <li><a href="setting.php" class="text-light">SETTING</a></li>
                   <br>
                   <li><a href="" class="text-light">HELP</a></li>
                   <br>
@@ -126,7 +126,23 @@ $mybuzzs = $User->displayMyBuzz($now);
                             </div>
                             <div class="col-md-7">
                                 <h5 class="text-light"><strong><?php echo $nowuser['account_name']; ?></strong><?php echo "(@".$nowlogin['username'].")"; ?></h5>
-                                <a href="edit_profile.php" role="button" class="btn btn-outline-danger float-right">EDIT</a>
+                                <div class="row">
+                                  <div class="col-md-4">
+                                    <?php
+                                    $follow = $User->countFollow($now);
+                                    echo '<div class="text-light pt-2">Follow: '.$follow.'</div>'
+                                    ?>
+                                  </div>
+                                  <div class="col-md-4">
+                                    <?php
+                                    $follower = $User->countFollower($now);
+                                    echo '<div class="text-light pt-2">Follower: '.$follower.'</div>'
+                                    ?>
+                                  </div>
+                                  <div class="col-md-4">
+                                    <a href="edit_profile.php" role="button" class="btn btn-outline-danger">EDIT</a>
+                                  </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -157,6 +173,12 @@ $mybuzzs = $User->displayMyBuzz($now);
                                 echo "</div>";
                                 echo '<div class="row">';
                                     echo '<div class="col-6">';
+                                        $comments = $User->countCom($buzid);
+                                        echo '<form action="comment.php" method="get">';
+                                          echo '<input type="hidden" name="user_id" value="'.$now.'">';
+                                          echo '<input type="hidden" name="tweet_id" value="'.$buzid.'">';
+                                          echo '<button type="submit" class="btn btn-outline-dark btn-block">COMMENT('.$comments.')</button>';
+                                        echo '</form>';
                                     echo '</div>';
                                     echo '<div class="col-6">';
                                         echo '<form action="action.php" method="post">';

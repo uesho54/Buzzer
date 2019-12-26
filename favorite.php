@@ -93,7 +93,7 @@ $buzzs = $User->displayFav($now);
               <div class="col-md-1"></div>
               <div class="col-md-11">
                 <ul style="list-style: none;">
-                  <li><a href="" class="text-light">SETTING</a></li>
+                  <li><a href="setting.php" class="text-light">SETTING</a></li>
                   <br>
                   <li><a href="" class="text-light">HELP</a></li>
                   <br>
@@ -139,6 +139,12 @@ $buzzs = $User->displayFav($now);
                                 echo "</div>";
                                 echo '<div class="row">';
                                     echo '<div class="col-6">';
+                                        $comments = $User->countCom($tweetid);
+                                        echo '<form action="comment.php" method="get">';
+                                          echo '<input type="hidden" name="user_id" value="'.$tweetuser.'">';
+                                          echo '<input type="hidden" name="tweet_id" value="'.$tweetid.'">';
+                                          echo '<button type="submit" class="btn btn-outline-dark btn-block">COMMENT('.$comments.')</button>';
+                                        echo '</form>';                                        
                                     echo '</div>';
                                     echo '<div class="col-6">';
                                         echo '<form action="action.php" method="post">';

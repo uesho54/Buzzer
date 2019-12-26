@@ -6,11 +6,7 @@ $nowuser = $User->getCurrentUser($now);
 $nowlogin = $User->getCurrentLogin($now);
 
 $img = $nowuser["image"];
-
-$nowid = $nowlogin["id"];
-
 ?>
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -107,32 +103,22 @@ $nowid = $nowlogin["id"];
             <p class="small text-light pt-3">BUZZER</p>
           </div>
         </div>
+
         <div class="col-md-9 mt-5">
             <div class="container w-75 mx-auto border">
                 <div class="text-center">
-                    <h4 class="display-4 text-danger">Edit Your Profile</h4>
+                    <h4 class="display-4 text-danger">Change Settings</h4>
                 </div>
-                <hr>
-                <form action="action.php" method="post" enctype="multipart/form-data">
-                    <div class="form-group text-center">
-                        <label for="" class="text-danger">ICON</label><br>
-                        <input type="file" name="picture">
-                        <input type="hidden" name="userid" value="<?php echo $nowid; ?>">
-                        <br><br>
-                        <button type="submit" name="icon" class="btn btn-outline-danger btn-block w-75 mx-auto">SAVE ICON</button>
-                    </div>
-                </form>
                 <hr>
                 <form action="action.php" method="post">
                     <div class="form-group text-center">
-                        <label for="" class="text-danger">ACCOUNT NAME</label>
-                        <input type="text" name="acname" class="form-control w-75 mx-auto" placeholder="<?php echo $nowuser['account_name']; ?>"><br>
-                        <label for="" class="text-danger">USERNAME</label>
-                        <input type="text" name="uname" class="form-control w-75 mx-auto" placeholder="<?php echo "@".$nowlogin['username']; ?>">
-                        <label for="" class="small">*No need @</label>
+                        <label for="">Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="<?php echo $nowuser["email"]; ?>">
+                        <label for="">Password</label>
+                        <input type="password" name="pword" class="form-control">
                         <input type="hidden" name="userid" value="<?php echo $nowid; ?>">
                         <br><br>
-                        <button type="submit" name="edit" class="btn btn-outline-danger btn-block w-75 mx-auto">SAVE EDIT</button>
+                        <button type="submit" name="set" class="btn btn-outline-danger btn-block w-75 mx-auto">SAVE</button>
                     </div>
                 </form>
             </div>
